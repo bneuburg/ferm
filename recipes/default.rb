@@ -11,8 +11,10 @@ package 'ferm' do
   action :upgrade
 end
 
+fermserviceaction = :enable
 fermaction = :start
 if node[:ferm][:active] == false
+  fermserviceaction = :disable
   fermaction = :stop
 end
 
@@ -24,5 +26,5 @@ template '/etc/ferm/ferm.conf'
 end
 
 service 'ferm' do
-  action fermaction
+  action [ fermaction, fermserviceaction]
 end
