@@ -26,7 +26,7 @@ table filter {
 	
     }
     chain OUTPUT {
-        policy <%= node[:ferm][:output][:policy].upcase %>;;
+        policy <%= node[:ferm][:output][:policy].upcase %>;
 
         # connection tracking
         mod state state INVALID DROP;
