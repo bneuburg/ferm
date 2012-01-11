@@ -1,1 +1,11 @@
-default[:ferm][:active]   = true
+default[:ferm][:active]               = true
+default[:ferm][:foreign_config]       = false
+default[:ferm][:input][:policy]       = "DROP"
+default[:ferm][:output][:policy]      = "ACCEPT"
+default[:ferm][:forward][:policy]     = "DROP"
+default[:ferm][:input][:ssh]          = "ACCEPT"
+default[:ferm][:input][:http]         = "DROP"
+default[:ferm][:input][:https]        = "DROP"
+default[:ferm][:input][:extras]       = []
+default[:ferm][:output][:extras]      = []
+default[:ferm][:forward][:extras]     = []

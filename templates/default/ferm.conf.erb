@@ -1,46 +1,54 @@
 # -*- shell-script -*-
 #
-#  Configuration file for ferm(1).
+#  Configuration file for ferm(1), created by Chef cookbook ferm
 #
 
 table filter {
     chain INPUT {
-        policy DROP;
+        policy <%= node[:ferm][:input][:policy].upcase %>;
 
         # connection tracking
         mod state state INVALID DROP;
         mod state state (ESTABLISHED RELATED) ACCEPT;
 
-        # allow local packet
-        interface lo ACCEPT;
-        # respond to ping
-        proto icmp ACCEPT; 
-        # allow SSH connections
-        proto tcp dport ssh ACCEPT;
+	<% node[:ferm][:input][:extras].each do |line| %>
+	<%= line %>
+	<% end %>
+	
+	# Accept connections from loopback interface
+	interface lo ACCEPT;
+
+	proto icmp ACCEPT;
+
+	proto tcp dport ssh <%= node[:ferm][:input][:ssh] %>;
+	proto tcp dport http <%= node[:ferm][:input][:http] %>;
+	proto tcp dport https <%= node[:ferm][:input][:https] %>;
+	
     }
     chain OUTPUT {
-        policy ACCEPT;
+        policy <%= node[:ferm][:output][:policy].upcase %>;;
 
         # connection tracking
-        #mod state state INVALID DROP;
+        mod state state INVALID DROP;
+
         mod state state (ESTABLISHED RELATED) ACCEPT;
+
+	<% node[:ferm][:output][:extras].each do |line| %>
+	<%= line %>
+	<% end %>
+
     }
     chain FORWARD {
-        policy DROP;
+        policy <%= node[:ferm][:forward][:policy].upcase %>;
+
 
         # connection tracking
         mod state state INVALID DROP;
         mod state state (ESTABLISHED RELATED) ACCEPT;
+
+	<% node[:ferm][:forward][:extras].each do |line| %>
+	<%= line %>
+	<% end %>
+
     }
 }
-
-# IPv6:
-#domain ip6 {
-#    table filter {
-#        chain INPUT {
-#            policy ACCEPT;
-#            # ...
-#        }
-#        # ...
-#    }
-#}
